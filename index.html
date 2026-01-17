@@ -103,51 +103,49 @@
     <div class="error" id="error"></div>
   </div>
 
-  <script>
-    const API_KEY = "a7aa24bebcb54d4cb26171452252208";
+ <script>
+  const API_KEY = "0c2205b4f9ef51be2281c13a1547bbd0";
 
-    async function getWeather() {
-      const city = document.getElementById("cityInput").value;
-      const result = document.getElementById("result");
-      const error = document.getElementById("error");
+  async function getWeather() {
+    const city = document.getElementById("cityInput").value;
+    const result = document.getElementById("result");
+    const error = document.getElementById("error");
 
-      error.textContent = "";
-      result.style.display = "none";
+    error.textContent = "";
+    result.style.display = "none";
 
-      if (city.trim() === "") {
-        error.textContent = "Please enter a city name";
-        return;
-      }
-
-      try {
-        const response = await fetch(
-          `https://api.weatherapi.com/v1/current.json?key=${API_KEY}&q=${city}`
-        );
-
-        if (!response.ok) {
-          throw new Error("City not found");
-        }
-
-        const data = await response.json();
-
-        document.getElementById("cityName").textContent =
-          data.location.name + ", " + data.location.country;
-
-        document.getElementById("temperature").textContent =
-          Math.round(data.current.temp_c) + "°C";
-
-        document.getElementById("condition").textContent =
-          data.current.condition.text;
-
-        document.getElementById("extraInfo").textContent =
-          `Humidity: ${data.current.humidity}% | Wind: ${data.current.wind_kph} km/h`;
-
-        result.style.display = "block";
-      } catch (err) {
-        error.textContent = "City not found or API error";
-      }
+    if (city.trim() === "") {
+      error.textContent = "Please enter a city name";
+      return;
     }
-  </script>
 
-</body>
-</html>
+    try {
+      const response = await fetch(
+        `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_KEY}&units=metric`
+      );
+
+      if (!response.ok) {
+        throw new Error("City not found");
+      }
+
+      const data = await response.json();
+
+      document.getElementById("cityName").textContent =
+        data.name + ", " + data.sys.country;
+
+      document.getElementById("temperature").textContent =
+        Math.round(data.main.temp) + "°C";
+
+      document.getElementById("condition").textContent =
+        data.weather[0].description;
+
+      document.getElementById("extraInfo").textContent =
+        `Humidity: ${data.main.humidity}% | Wind: ${data.wind.speed} m/s`;
+
+      result.style.display = "block";
+    } catch (err) {
+      error.textContent = "City not found or API error";
+    }
+  }
+</script>
+
